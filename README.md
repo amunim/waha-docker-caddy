@@ -74,7 +74,7 @@ GENERIC_TIMEZONE=Europe/Berlin
 SSL_EMAIL=your-email@yourdomain.com
 ```
 
-### 7. Configure Caddy (Optional)
+### 7. Configure Caddy
 
 Edit the Caddyfile to customize your setup:
 
@@ -94,7 +94,35 @@ waha.yourdomain.com {
     }
 }
 ```
+For accessing API here are some examples:
+```javascript
+fetch("https://waha.example.com/api/sendText", {
+  method: "POST",
+  headers: {
+    "Authorization": "Basic " + btoa("admin:YourSecurePassword"),
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    chatId: "1234567890@c.us",
+    text: "Hello!",
+    session: "default"
+  })
+});
+```
+if you're using curl:
+```curl
+curl -X POST https://waha.example.com/api/sendText \
+  -u admin:YourSecurePassword \
+  -H "Content-Type: application/json" \
+  -d '{
+    "chatId": "1234567890@c.us",
+    "text": "Hello!",
+    "session": "default"
+  }'
+```
+> -u admin:YourSecurePassword adds the Basic Auth header for you.
 
+After verifying your deployment, see step#9 to completely secure your app
 #### Without Basic Authentication
 
 ```caddyfile
@@ -120,7 +148,19 @@ Replace the hash in the Caddyfile with the generated hash.
 ```bash
 sudo docker compose up -d
 ```
-
+### 9. If you want to disallow access to waha by ip:port (Optional but Recommended)
+After you have verified your deployment by both ip:port acess and domain access. You can remove access to your server via ip:port by binding port to localhost in `docker-compose.yml` for `waha`
+Final version will look like this (notably change to `ports`):
+```yaml
+  waha:
+    image: devlikeapro/waha:latest
+    container_name: waha
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3000:3000"  # Only accessible from localhost, only access through caddy
+    volumes:
+      - waha_data:/app/data
+```
 ## Verification
 
 1. Check if containers are running:

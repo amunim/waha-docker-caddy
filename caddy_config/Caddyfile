@@ -1,4 +1,7 @@
 waha.<subdomain>.<suffix> {
+    basicauth {
+        admin <hash_password> # Replace <hash_password> with the actual hashed password: ` docker run --rm caddy caddy hash-password --plaintext "YourSecurePassword" `
+    }
     reverse_proxy waha:3000 {
         flush_interval -1
     }

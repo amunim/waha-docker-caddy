@@ -1,0 +1,5 @@
+waha.<subdomain>.<suffix> {
+    reverse_proxy waha:3000 {
+        flush_interval -1
+    }
+}
